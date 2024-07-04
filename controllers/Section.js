@@ -54,12 +54,44 @@ exports.updateSection = async (req, res) => {
         }, { new: true });
 
 
-
+        return res.status(200).json({
+            success: true,
+            message: 'Section Updated Successfully'
+        });
 
     } catch (err) {
         return res.status(500).json({
             success: false,
             message: 'Something Went Wrong During Updating Section'
-        })
+        });
+    }
+}
+
+
+exports.deleteSection = async (req, res) => {
+    try {
+
+        const { sectionId } = req.body;
+        if (!sectionId) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are mandatory"
+            });
+        }
+        await Section.findByIdAndDelete(sectionId);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Section Deleted Successfully'
+        });
+
+
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Something Went Wrong During Deleting Section',
+            error: err.message
+        });
     }
 }
