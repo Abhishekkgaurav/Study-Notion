@@ -123,6 +123,10 @@ turbo
 temp
 .tmp
 
+# Unignore specific directory
+!mail/
+!mail/templates/
+
 # IDEs and editors
 .idea/
 .vscode/

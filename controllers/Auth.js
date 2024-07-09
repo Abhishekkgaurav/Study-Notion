@@ -6,6 +6,8 @@ const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
+
 exports.sendOTP = async (req, res) => {
     try {
         const { email } = req.body;
@@ -174,7 +176,8 @@ exports.login = async (req, res) => {
             res.cookie("token", token, options).status(200).json({
                 success: true,
                 token,
-                user
+                user,
+                message: 'Logged in Successfully'
             })
         }
 
@@ -198,6 +201,13 @@ exports.login = async (req, res) => {
 }
 
 exports.changePassword = async (req, res) => {
+    //get data from req body
+    //get oldPassword, newPassword, confirmNewPassowrd
+    //validation
+
+    //update pwd in DB
+    //send mail - Password updated
+    //return response
     try {
 
     } catch (err) { }
