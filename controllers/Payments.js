@@ -53,6 +53,15 @@ exports.capturePayment = async (req, res) => {
             try {
                 const paymentResponse = await instance.orders.create(options);
                 console.log(paymentResponse);
+                return res.status(200).json({
+                    success: true,
+                    courseName: course.courseName,
+                    courseDescription: course.courseDescription,
+                    thumbnail: course.thumbnail,
+                    orderid: paymentResponse.id,
+                    currency: paymentResponse.currency,
+                    amount: paymentResponse.amount
+                });
             } catch (err) {
                 console.log(err);
                 res.json({
@@ -73,6 +82,77 @@ exports.capturePayment = async (req, res) => {
 
 
     } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Something Went Wrong'
+        })
 
     }
 };
+
+
+exports.verifySignature = async (req, res) => {
+    const webhookSecret = "12345678";
+    const signature = req.headers('x-razorpay-signature');
+
+    const shasum = crypto.createHmac("sha256", webhookSecret);
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest("hex");
+
+    if (signature === digest) {
+        console.log('Payment is Authorised');
+
+        const { courseId, userId } = req.body.payload.entity.notes;
+
+        try {
+            const enrolledCourse = await Course.findOneAndUpdate(
+                { _id: courseId },
+                { $push: { studentEnrolled: userId } },
+                { new: true }
+            );
+            if (!enrolledCourse) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Course not Found'
+                });
+            }
+            console.log(enrolledCourse);
+
+            const enrolledStudent = User.findOneAndUpdate(
+                { _id: userId },
+                { $push: { courses: courseId } },
+                { new: true }
+            );
+            console.log(enrolledStudent);
+
+            const emailResponse = await mailSender(
+                enrolledStudent.email,
+                "Congratulations",
+                "Congratulations, You are successfully registered in the course"
+            );
+            console.log(emailResponse);
+            return res.status(200).json({
+                success: true,
+                message: 'Signature Verified and Course Added'
+            });
+
+
+        } catch (err) {
+            console.log(error);
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
+    }
+
+    else {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Request"
+        });
+    }
+
+
+}
