@@ -6,10 +6,10 @@ const Home = () => {
     return (
         <div>
             {/* section 1 */}
-            <div>
+            <div className="relative text-white mx-auto flex flex-col w-11/12 items-center">
                 <Link to={"/signup"} >
-                    <div>
-                        <div>
+                    <div className="mx-auto rounded-full bg-richblack-800 font-bold">
+                        <div className="">
                             <p>Become an Instructor</p>
                             <FaArrowRight />
                         </div>
