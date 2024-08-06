@@ -129,6 +129,10 @@ module.exports = {
         maxContent: "1260px",
         maxContentTab: "650px"
       },
+      boxShadow: {
+        'custom-inset': 'inset -2px -2px 0px 0px rgba(255, 255, 255, 0.18)',
+        'custom-inset-yellow': 'inset -2px -2px 0px 0px rgba(255, 255, 255, 0.51)',
+      },
     },
   },
   plugins: [],
